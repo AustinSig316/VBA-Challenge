@@ -7,7 +7,7 @@
 ## Results
 
 The entire code for the project is listed below:
->Sub AllStocksAnalysisRefactored()
+Sub AllStocksAnalysisRefactored()
     Dim startTime As Single
     Dim endTime  As Single
 
@@ -133,10 +133,10 @@ End Sub
 -When comparing the original code to the new code we can see slight changes in the time needed to run the macro. In 2017 the original code ran in 0.4 seconds and the refactored code ran in 0.54 seconds. For 2018 the original code .42 seconds and the refactored code ran in .46 seconds. Both are hardly noticeable to make a difference but if this was to run on larger projects then the time disparity could become larger.
   ![VBA_Challenge_2017_Before](Resources/VBA_Challenge_2017_Before.png)
   ![VBA_Challenge_2017](Resources/VBA_Challenge_2017.png)
-  ![VBA_Challenge_2018_Before](Resources/VBA_Challenge_201_Before.png)
-  ![VBA_Challenge_201](Resources/VBA_Challenge_201.png)
+  ![VBA_Challenge_2018_Before](Resources/VBA_Challenge_2018_Before.png)
+  ![VBA_Challenge_2018](Resources/VBA_Challenge_2018.png)
 -Looking at the stocks there are only two that have shown a return over the two years. ENPH and RUN both has a positive return rate with RUN showing a much larger return. All other stocks had a negative return percentage however AY had a much smaller loss than all others and would be one to watch for. TERP is the only stock that has not have a positive return.
-![VBA_Challenge_2017_Results](Resources/VBA_Challenge_2017_Results.png
+![VBA_Challenge_2017_Results](Resources/VBA_Challenge_2017_Results.png)
 ![VBA_Challenge_2018_Results](Resources/VBA_Challenge_2018_Results.png)
 
 ## Summary
