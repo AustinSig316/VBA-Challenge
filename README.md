@@ -6,16 +6,138 @@
 
 ## Results
 
-My analysis began with a collection of available Kickstarter data which was combed through for errors, dates converted to be legible and additional columns made for easier categorization. When looking at campaign statuses and the time of year they started, a pivot table was used. The pivot table was filtered looking at only theater projects from the data and then separated in the table by months and successful, failed, and canceled campaigns as the results. Based on this analysis the best time to start a Kickstarter campaign for a theater project is in May. A campaign should not be started during the months at the beginning or end of the year.
-![Outcomes Based on Launch Date Analysis](Resources/Theater_Outcomes_vs_Launch.png)
+The entire code for the project is listed below:
+>Sub AllStocksAnalysisRefactored()
+    Dim startTime As Single
+    Dim endTime  As Single
 
+    yearValue = InputBox("What year would you like to run the analysis on?")
 
-### Analysis of Outcomes Based on Goals
-The second analysis looked at the goal of a project ranging from less than $1,000 to greater than $50,000 using increments of $5,000 as the scale. The scale populated with data that fit the parameters defined COUNTIF function into successful, failed, and canceled then the percentage rate for those statuses were considered.  This analysis tells us the most successful theater Kickstarter campaigns running a goal amount of less than $14,999 have a greater than 50% chance of succeeding with. Higher campaigns are more likely to fail.
-![Outcomes Based on Goals Analysis](Resources/Outcomes_vs_Goals.png)
+    startTime = Timer
+    
+    'Format the output sheet on All Stocks Analysis worksheet
+    Worksheets("All Stocks Analysis").Activate
+    
+    Range("A1").Value = "All Stocks (" + yearValue + ")"
+    
+    'Create a header row
+    Cells(3, 1).Value = "Ticker"
+    Cells(3, 2).Value = "Total Daily Volume"
+    Cells(3, 3).Value = "Return"
 
-### Challenges and Difficulties Encountered
-No challenges were, presented during the analysis. Some possible challenges that could be present are incorrect categorization from faulty data entry by the analyst or whom initiated the campaign, outliers (i.e. unrealistic goals) within the funding received or needed, incomplete data, the information of those who donated, and if the campaigns were shared or advertised over the internet or different mediums. 
+    'Initialize array of all tickers
+    Dim tickers(12) As String
+    
+    tickers(0) = "AY"
+    tickers(1) = "CSIQ"
+    tickers(2) = "DQ"
+    tickers(3) = "ENPH"
+    tickers(4) = "FSLR"
+    tickers(5) = "HASI"
+    tickers(6) = "JKS"
+    tickers(7) = "RUN"
+    tickers(8) = "SEDG"
+    tickers(9) = "SPWR"
+    tickers(10) = "TERP"
+    tickers(11) = "VSLR"
+    
+    'Activate data worksheet
+    Worksheets(yearValue).Activate
+    
+    'Get the number of rows to loop over
+    RowCount = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    '1a) Create a ticker Index
+    tickerIndex = 0
+
+    '1b) Create three output arrays
+    Dim tickerVolumes(12) As Long
+    Dim tickerStartingPrices(12) As Single
+    Dim tickerEndingPrices(12) As Single
+    
+    ''2a) Create a for loop to initialize the tickerVolumes to zero.
+    For i = 0 To 11
+    tickerVolumes(i) = 0
+    tickerStartingPrices(i) = 0
+    tickerEndingPrices(i) = 0
+    Next i
+        
+    ''2b) Loop over all the rows in the spreadsheet.
+    For i = 2 To RowCount
+    
+        '3a) Increase volume for current ticker
+        tickerVolumes(tickerIndex) = tickerVolumes(tickerIndex) + Cells(i, 8).Value
+        
+        '3b) Check if the current row is the first row with the selected tickerIndex.
+        'If  Then
+        If Cells(i, 1).Value = tickers(tickerIndex) And Cells(i - 1, 1).Value <> tickers(tickerIndex) Then
+        tickerStartingPrices(tickerIndex) = Cells(i, 6).Value
+        End If
+        
+        '3c) check if the current row is the last row with the selected ticker
+         'If the next row's ticker doesn't match, increase the tickerIndex.
+        'If  Then
+          If Cells(i, 1).Value = tickers(tickerIndex) And Cells(i + 1, 1).Value <> tickers(tickerIndex) Then
+            tickerEndingPrices(tickerIndex) = Cells(i, 6).Value
+        End If
+            
+            '3d Increase the tickerIndex.
+            If Cells(i, 1).Value = tickers(tickerIndex) And Cells(i + 1, 1).Value <> tickers(tickerIndex) Then
+            tickerIndex = tickerIndex + 1
+        End If
+        'End if
+        
+    
+    Next i
+    
+    '4) Loop through your arrays to output the Ticker, Total Daily Volume, and Return.
+    For i = 0 To 11
+        
+        Worksheets("All Stocks Analysis").Activate
+        Cells(4 + i, 1).Value = tickers(i)
+        Cells(4 + i, 2).Value = tickerVolumes(i)
+        Cells(4 + i, 3).Value = tickerEndingPrices(i) / tickerStartingPrices(i) - 1
+        
+    Next i
+    
+    'Formatting
+    Worksheets("All Stocks Analysis").Activate
+    Range("A3:C3").Font.FontStyle = "Bold"
+    Range("A3:C3").Borders(xlEdgeBottom).LineStyle = xlContinuous
+    Range("B4:B15").NumberFormat = "#,##0"
+    Range("C4:C15").NumberFormat = "0.0%"
+    Columns("B").AutoFit
+
+    dataRowStart = 4
+    dataRowEnd = 15
+
+    For i = dataRowStart To dataRowEnd
+        
+        If Cells(i, 3) > 0 Then
+            
+            Cells(i, 3).Interior.Color = vbGreen
+            
+        Else
+        
+            Cells(i, 3).Interior.Color = vbRed
+            
+        End If
+        
+    Next i
+ 
+    endTime = Timer
+    MsgBox "This code ran in " & (endTime - startTime) & " seconds for the year " & (yearValue)
+
+End Sub
+
+-When comparing the original code to the new code we can see slight changes in the time needed to run the macro. In 2017 the original code ran in 0.4 seconds and the refactored code ran in 0.54 seconds. For 2018 the original code .42 seconds and the refactored code ran in .46 seconds. Both are hardly noticeable to make a difference but if this was to run on larger projects then the time disparity could become larger.
+  ![VBA_Challenge_2017_Before](Resources/VBA_Challenge_2017_Before.png)
+  ![VBA_Challenge_2017](Resources/VBA_Challenge_2017.png)
+  ![VBA_Challenge_2018_Before](Resources/VBA_Challenge_201_Before.png)
+  ![VBA_Challenge_201](Resources/VBA_Challenge_201.png)
+-Looking at the stocks there are only two that have shown a return over the two years. ENPH and RUN both has a positive return rate with RUN showing a much larger return. All other stocks had a negative return percentage however AY had a much smaller loss than all others and would be one to watch for. TERP is the only stock that has not have a positive return.
+![VBA_Challenge_2017_Results](Resources/VBA_Challenge_2017_Results.png
+![VBA_Challenge_2018_Results](Resources/VBA_Challenge_2018_Results.png)
 
 ## Summary
 
